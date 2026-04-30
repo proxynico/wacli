@@ -114,6 +114,10 @@ func chatKind(chat types.JID) string {
 }
 
 func (a *App) storeParsedMessage(ctx context.Context, pm wa.ParsedMessage) error {
+	// Resolve LID chat and sender JIDs to Phone Number JIDs so messages are stored
+	// under the canonical PN-based chat instead of a separate LID chat.
+	pm.Chat = a.wa.ResolveLIDToPN(ctx, pm.Chat)
+
 	chatJID := canonicalJIDString(pm.Chat)
 	chatName := a.wa.ResolveChatName(ctx, pm.Chat, pm.PushName)
 	if err := a.db.UpsertChat(chatJID, chatKind(pm.Chat), chatName, pm.Timestamp); err != nil {
@@ -144,6 +148,7 @@ func (a *App) storeParsedMessage(ctx context.Context, pm wa.ParsedMessage) error
 	senderJID := pm.SenderJID
 	if pm.SenderJID != "" {
 		if jid, err := types.ParseJID(pm.SenderJID); err == nil {
+			jid = a.wa.ResolveLIDToPN(ctx, jid)
 			contactJID := canonicalJID(jid)
 			senderJID = contactJID.String()
 			if info, err := a.wa.GetContact(ctx, contactJID); err == nil {
