@@ -6,6 +6,10 @@
 
 - Sync: collapse routine interactive TTY progress into a single updating status line while keeping warnings visible as normal stderr lines.
 
+### Fixed
+
+- Messages: extract display/search text from shared WhatsApp contact cards, including vCard phone numbers. (#214)
+
 ## 0.8.0 - 2026-05-07
 
 ### Added

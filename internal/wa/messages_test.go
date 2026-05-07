@@ -233,6 +233,73 @@ func TestParseLiveMessageForwarded(t *testing.T) {
 	}
 }
 
+func TestParseContactMessageText(t *testing.T) {
+	chat, _ := types.ParseJID("123@s.whatsapp.net")
+	sender, _ := types.ParseJID("sender@s.whatsapp.net")
+
+	ev := &events.Message{
+		Info: types.MessageInfo{
+			MessageSource: types.MessageSource{
+				Chat:     chat,
+				Sender:   sender,
+				IsFromMe: false,
+			},
+			ID:        "contact1",
+			Timestamp: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+		},
+		Message: &waProto.Message{
+			ContactMessage: &waProto.ContactMessage{
+				DisplayName: proto.String("Ada Lovelace"),
+				Vcard: proto.String("BEGIN:VCARD\nVERSION:3.0\nFN:Ada Lovelace\n" +
+					"TEL;type=CELL;waid=441234567890:+44 1234 567890\nEND:VCARD"),
+			},
+		},
+	}
+
+	pm := ParseLiveMessage(ev)
+	if pm.Text != "Contact: Ada Lovelace (+44 1234 567890)" {
+		t.Fatalf("unexpected contact text: %q", pm.Text)
+	}
+}
+
+func TestParseContactsArrayMessageText(t *testing.T) {
+	chat, _ := types.ParseJID("123@s.whatsapp.net")
+	sender, _ := types.ParseJID("sender@s.whatsapp.net")
+
+	ev := &events.Message{
+		Info: types.MessageInfo{
+			MessageSource: types.MessageSource{
+				Chat:     chat,
+				Sender:   sender,
+				IsFromMe: false,
+			},
+			ID:        "contacts1",
+			Timestamp: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+		},
+		Message: &waProto.Message{
+			ContactsArrayMessage: &waProto.ContactsArrayMessage{
+				DisplayName: proto.String("2 contacts"),
+				Contacts: []*waProto.ContactMessage{
+					{
+						DisplayName: proto.String("Ada Lovelace"),
+						Vcard:       proto.String("BEGIN:VCARD\nFN:Ada Lovelace\nTEL:+44 1234\nEND:VCARD"),
+					},
+					{
+						DisplayName: proto.String("Grace Hopper"),
+						Vcard:       proto.String("BEGIN:VCARD\nFN:Grace Hopper\nTEL:+1 555\nEND:VCARD"),
+					},
+				},
+			},
+		},
+	}
+
+	pm := ParseLiveMessage(ev)
+	want := "Contacts:\nContact: Ada Lovelace (+44 1234)\nContact: Grace Hopper (+1 555)"
+	if pm.Text != want {
+		t.Fatalf("unexpected contacts text: %q", pm.Text)
+	}
+}
+
 func TestParseTemplateMessage(t *testing.T) {
 	chat, _ := types.ParseJID("123@s.whatsapp.net")
 	sender, _ := types.ParseJID("biz@s.whatsapp.net")
@@ -460,6 +527,16 @@ func TestDisplayTextForProtoBusinessTypes(t *testing.T) {
 		msg  *waProto.Message
 		want string
 	}{
+		{
+			name: "contact",
+			msg: &waProto.Message{
+				ContactMessage: &waProto.ContactMessage{
+					DisplayName: proto.String("Ada Lovelace"),
+					Vcard:       proto.String("BEGIN:VCARD\nFN:Ada Lovelace\nTEL:+44 1234\nEND:VCARD"),
+				},
+			},
+			want: "Contact: Ada Lovelace (+44 1234)",
+		},
 		{
 			name: "template",
 			msg: &waProto.Message{

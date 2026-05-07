@@ -91,10 +91,10 @@ func displayTextForProto(m *waProto.Message) string {
 		return "Sent location"
 	}
 	if contact := m.GetContactMessage(); contact != nil {
-		return "Sent contact"
+		return contactDisplayText(contact)
 	}
 	if contacts := m.GetContactsArrayMessage(); contacts != nil {
-		return "Sent contacts"
+		return contactsArrayDisplayText(contacts)
 	}
 
 	if text := strings.TrimSpace(m.GetConversation()); text != "" {

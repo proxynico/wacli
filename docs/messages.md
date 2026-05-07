@@ -22,6 +22,7 @@ wacli messages delete --chat JID --id MSG_ID [--for-me] [--delete-media] [--post
 - Uses SQLite FTS5 when the binary was built with `-tags sqlite_fts5`.
 - Falls back to `LIKE` if FTS5 is not available.
 - `--type` accepts `text`, `image`, `video`, `audio`, or `document`.
+- Shared WhatsApp contact cards are stored as searchable text with contact names and phone numbers when WhatsApp includes a vCard payload.
 - `--starred` restricts list/search results to messages marked as starred by WhatsApp.
 - Time filters accept RFC3339 or `YYYY-MM-DD`.
 

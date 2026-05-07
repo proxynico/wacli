@@ -100,6 +100,7 @@ func extractWAProto(m *waProto.Message, pm *ParsedMessage) {
 	extractReaction(m, pm)
 	extractPlainText(m, pm)
 	extractMedia(m, pm)
+	extractContactText(m, pm)
 	extractBusinessText(m, pm)
 
 	if ctx := contextInfoForMessage(m); ctx != nil {
