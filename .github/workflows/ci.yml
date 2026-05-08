@@ -60,19 +60,19 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: check --config .goreleaser.yaml
 
       - name: GoReleaser check (linux/windows)
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: check --config .goreleaser-linux-windows.yaml
 
       - name: GoReleaser build (linux amd64/arm64)
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: build --snapshot --clean --config .goreleaser-linux-windows.yaml --id wacli_linux_amd64 --id wacli_linux_arm64
