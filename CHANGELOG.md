@@ -4,6 +4,7 @@
 
 ### Added
 
+- Docker: add a local image with `/data` persistence, bundled `ffmpeg`, and Docker CI smoke coverage.
 - Send: add opt-in `send text --ephemeral` wrapping for disappearing-message chats. (#227 - thanks @AndroidPoet)
 
 ### Fixed
