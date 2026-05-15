@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/openclaw/wacli/internal/fsutil"
 	"github.com/openclaw/wacli/internal/lock"
 )
 
@@ -88,7 +88,7 @@ func TestSendDelegateRequestPreservesEphemeralInJSON(t *testing.T) {
 
 func TestRemoveStaleSendDelegateSocketRefusesRegularFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), sendDelegateSocketName)
-	if err := os.WriteFile(path, []byte("not a socket"), 0o600); err != nil {
+	if err := fsutil.WritePrivateFile(path, []byte("not a socket")); err != nil {
 		t.Fatalf("WriteFile: %v", err)
 	}
 	if err := removeStaleSendDelegateSocket(path); err == nil || !strings.Contains(err.Error(), "not a socket") {

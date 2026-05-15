@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/openclaw/wacli/internal/fsutil"
 	"github.com/openclaw/wacli/internal/wa"
 	"go.mau.fi/whatsmeow"
 	waProto "go.mau.fi/whatsmeow/binary/proto"
@@ -457,7 +458,7 @@ func (f *fakeWA) DownloadMediaToFile(ctx context.Context, directPath string, enc
 	if err := os.MkdirAll(filepath.Dir(targetPath), 0o700); err != nil {
 		return 0, err
 	}
-	if err := os.WriteFile(targetPath, []byte("test"), 0o600); err != nil {
+	if err := fsutil.WritePrivateFile(targetPath, []byte("test")); err != nil {
 		return 0, err
 	}
 	st, err := os.Stat(targetPath)

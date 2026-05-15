@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/openclaw/wacli/internal/fsutil"
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/types"
 )
@@ -137,7 +138,7 @@ func TestWarnRapidSendIfNeededSkipsOldOrInvalidMarker(t *testing.T) {
 	now := time.Date(2026, 5, 4, 12, 0, 0, 0, time.UTC)
 	path := filepath.Join(dir, lastSendAttemptFile)
 
-	if err := os.WriteFile(path, []byte(now.Add(-rapidSendWarningThreshold).Format(time.RFC3339Nano)), 0o600); err != nil {
+	if err := fsutil.WritePrivateFile(path, []byte(now.Add(-rapidSendWarningThreshold).Format(time.RFC3339Nano))); err != nil {
 		t.Fatalf("write old marker: %v", err)
 	}
 	var stderr bytes.Buffer
@@ -148,7 +149,7 @@ func TestWarnRapidSendIfNeededSkipsOldOrInvalidMarker(t *testing.T) {
 		t.Fatalf("old marker warned: %q", stderr.String())
 	}
 
-	if err := os.WriteFile(path, []byte("not a timestamp"), 0o600); err != nil {
+	if err := fsutil.WritePrivateFile(path, []byte("not a timestamp")); err != nil {
 		t.Fatalf("write invalid marker: %v", err)
 	}
 	if err := warnRapidSendIfNeeded(dir, now.Add(time.Second), &stderr); err != nil {

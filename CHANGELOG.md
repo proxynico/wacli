@@ -7,6 +7,10 @@
 - Docker: add a local image with `/data` persistence, bundled `ffmpeg`, and Docker CI smoke coverage.
 - Send: add opt-in `send text --ephemeral` wrapping for disappearing-message chats. (#227 - thanks @AndroidPoet)
 
+### Security
+
+- Store: harden private-file writes and use static SQL for message reaction migrations. (#241 - thanks @cy701)
+
 ### Fixed
 
 - Messages: preserve WhatsApp Business buttons and list options in JSON output. (#226 - thanks @ignaciovarela)

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/openclaw/wacli/internal/app"
+	"github.com/openclaw/wacli/internal/fsutil"
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/types"
 )
@@ -122,11 +123,8 @@ func warnRapidSendIfNeeded(storeDir string, now time.Time, stderr io.Writer) err
 			}
 		}
 	}
-	if err := os.WriteFile(path, []byte(now.Format(time.RFC3339Nano)+"\n"), 0o600); err != nil {
+	if err := fsutil.WritePrivateFile(path, []byte(now.Format(time.RFC3339Nano)+"\n")); err != nil {
 		return fmt.Errorf("write last send marker: %w", err)
-	}
-	if err := os.Chmod(path, 0o600); err != nil {
-		return fmt.Errorf("chmod last send marker: %w", err)
 	}
 	return nil
 }
