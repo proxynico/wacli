@@ -230,6 +230,10 @@ func (f *fakeWA) GetUserInfo(ctx context.Context, jids []types.JID) (map[types.J
 	return map[types.JID]types.UserInfo{}, nil
 }
 
+func (f *fakeWA) IsOnWhatsApp(ctx context.Context, phones []string) ([]types.IsOnWhatsAppResponse, error) {
+	return nil, nil
+}
+
 func (f *fakeWA) GetContact(ctx context.Context, jid types.JID) (types.ContactInfo, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()

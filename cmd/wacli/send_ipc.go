@@ -212,7 +212,7 @@ func executeDelegatedText(ctx context.Context, a *app.App, req sendDelegateReque
 	if err != nil {
 		return sendDelegateResponse{}, err
 	}
-	warmupDelegatedRecipient(ctx, a, toJID)
+	toJID = warmupDelegatedRecipient(ctx, a, toJID)
 	mentionedJIDs, err := parseMentionedJIDs(req.Mentions)
 	if err != nil {
 		return sendDelegateResponse{}, err
@@ -248,7 +248,7 @@ func executeDelegatedFile(ctx context.Context, a *app.App, req sendDelegateReque
 	if err != nil {
 		return sendDelegateResponse{}, err
 	}
-	warmupDelegatedRecipient(ctx, a, toJID)
+	toJID = warmupDelegatedRecipient(ctx, a, toJID)
 	if err := warnRapidSendIfNeeded(a.StoreDir(), time.Now().UTC(), os.Stderr); err != nil {
 		return sendDelegateResponse{}, err
 	}
@@ -278,7 +278,7 @@ func executeDelegatedSticker(ctx context.Context, a *app.App, req sendDelegateRe
 	if err != nil {
 		return sendDelegateResponse{}, err
 	}
-	warmupDelegatedRecipient(ctx, a, toJID)
+	toJID = warmupDelegatedRecipient(ctx, a, toJID)
 	if err := warnRapidSendIfNeeded(a.StoreDir(), time.Now().UTC(), os.Stderr); err != nil {
 		return sendDelegateResponse{}, err
 	}
@@ -304,7 +304,7 @@ func executeDelegatedReact(ctx context.Context, a *app.App, req sendDelegateRequ
 	if err != nil {
 		return sendDelegateResponse{}, err
 	}
-	warmupDelegatedRecipient(ctx, a, chat)
+	chat = warmupDelegatedRecipient(ctx, a, chat)
 	if err := warnRapidSendIfNeeded(a.StoreDir(), time.Now().UTC(), os.Stderr); err != nil {
 		return sendDelegateResponse{}, err
 	}
@@ -352,8 +352,8 @@ func writeDelegatedSendOutput(flags *rootFlags, kind string, resp sendDelegateRe
 	return nil
 }
 
-func warmupDelegatedRecipient(ctx context.Context, a *app.App, jid types.JID) {
-	warmupRecipient(ctx, a.WA(), jid, os.Stderr)
+func warmupDelegatedRecipient(ctx context.Context, a *app.App, jid types.JID) types.JID {
+	return warmupRecipient(ctx, a.WA(), jid, os.Stderr)
 }
 
 func durationMillis(d time.Duration) int64 {

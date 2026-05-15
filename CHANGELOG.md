@@ -10,6 +10,7 @@
 ### Fixed
 
 - Messages: preserve WhatsApp Business buttons and list options in JSON output. (#226 - thanks @ignaciovarela)
+- Send: canonicalize direct phone-number recipients before sending so WhatsApp accepts regional number rewrites. (#212, #240 - thanks @ceifa)
 - Send: warm up recipients before send to reduce privacy-token failures. (#234 - thanks @AndroidPoet)
 
 ### Docs
