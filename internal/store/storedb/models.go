@@ -8,6 +8,25 @@ import (
 	"database/sql"
 )
 
+type CallEvent struct {
+	Rowid        int64
+	ChatJid      string
+	ChatName     sql.NullString
+	SenderJid    sql.NullString
+	SenderName   sql.NullString
+	CallID       string
+	MsgID        sql.NullString
+	EventType    string
+	Direction    sql.NullString
+	Media        sql.NullString
+	Outcome      sql.NullString
+	Reason       sql.NullString
+	CallType     sql.NullString
+	DurationSecs int64
+	Ts           int64
+	Participants sql.NullString
+}
+
 type Chat struct {
 	Jid           string
 	Kind          string
@@ -129,4 +148,25 @@ type Starred struct {
 	SenderJid sql.NullString
 	FromMe    int64
 	StarredAt int64
+}
+
+type StatusMessage struct {
+	Rowid           int64
+	MsgID           string
+	Ts              int64
+	FromMe          int64
+	SenderJid       sql.NullString
+	SenderName      sql.NullString
+	Text            sql.NullString
+	MediaType       sql.NullString
+	MediaCaption    sql.NullString
+	Filename        sql.NullString
+	MimeType        sql.NullString
+	DirectPath      sql.NullString
+	MediaKey        []byte
+	FileSha256      []byte
+	FileEncSha256   []byte
+	FileLength      sql.NullInt64
+	BackgroundColor sql.NullString
+	Font            sql.NullInt64
 }

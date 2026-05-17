@@ -1,6 +1,6 @@
-CREATE TABLE chats (
+CREATE TABLE IF NOT EXISTS chats (
     jid TEXT PRIMARY KEY,
-    kind TEXT NOT NULL,
+    kind TEXT NOT NULL, -- dm|group|broadcast|newsletter|unknown
     name TEXT,
     last_message_ts INTEGER,
     archived INTEGER NOT NULL DEFAULT 0,
@@ -9,7 +9,7 @@ CREATE TABLE chats (
     unread INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE TABLE contacts (
+CREATE TABLE IF NOT EXISTS contacts (
     jid TEXT PRIMARY KEY,
     phone TEXT,
     push_name TEXT,
@@ -20,7 +20,7 @@ CREATE TABLE contacts (
     updated_at INTEGER NOT NULL
 );
 
-CREATE TABLE groups (
+CREATE TABLE IF NOT EXISTS groups (
     jid TEXT PRIMARY KEY,
     name TEXT,
     owner_jid TEXT,
@@ -31,7 +31,7 @@ CREATE TABLE groups (
     updated_at INTEGER NOT NULL
 );
 
-CREATE TABLE group_participants (
+CREATE TABLE IF NOT EXISTS group_participants (
     group_jid TEXT NOT NULL,
     user_jid TEXT NOT NULL,
     role TEXT,
@@ -40,21 +40,21 @@ CREATE TABLE group_participants (
     FOREIGN KEY (group_jid) REFERENCES groups(jid) ON DELETE CASCADE
 );
 
-CREATE TABLE contact_aliases (
+CREATE TABLE IF NOT EXISTS contact_aliases (
     jid TEXT PRIMARY KEY,
     alias TEXT NOT NULL,
     notes TEXT,
     updated_at INTEGER NOT NULL
 );
 
-CREATE TABLE contact_tags (
+CREATE TABLE IF NOT EXISTS contact_tags (
     jid TEXT NOT NULL,
     tag TEXT NOT NULL,
     updated_at INTEGER NOT NULL,
     PRIMARY KEY (jid, tag)
 );
 
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
     rowid INTEGER PRIMARY KEY AUTOINCREMENT,
     chat_jid TEXT NOT NULL,
     chat_name TEXT,
@@ -89,7 +89,57 @@ CREATE TABLE messages (
     FOREIGN KEY (chat_jid) REFERENCES chats(jid) ON DELETE CASCADE
 );
 
-CREATE TABLE starred (
+CREATE INDEX IF NOT EXISTS idx_messages_chat_ts ON messages(chat_jid, ts);
+CREATE INDEX IF NOT EXISTS idx_messages_ts ON messages(ts);
+
+CREATE TABLE IF NOT EXISTS status_messages (
+    rowid INTEGER PRIMARY KEY AUTOINCREMENT,
+    msg_id TEXT NOT NULL UNIQUE,
+    ts INTEGER NOT NULL,
+    from_me INTEGER NOT NULL,
+    sender_jid TEXT,
+    sender_name TEXT,
+    text TEXT,
+    media_type TEXT,
+    media_caption TEXT,
+    filename TEXT,
+    mime_type TEXT,
+    direct_path TEXT,
+    media_key BLOB,
+    file_sha256 BLOB,
+    file_enc_sha256 BLOB,
+    file_length INTEGER,
+    background_color TEXT,
+    font INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_status_messages_ts ON status_messages(ts);
+
+CREATE TABLE IF NOT EXISTS call_events (
+    rowid INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_jid TEXT NOT NULL,
+    chat_name TEXT,
+    sender_jid TEXT,
+    sender_name TEXT,
+    call_id TEXT NOT NULL,
+    msg_id TEXT,
+    event_type TEXT NOT NULL,
+    direction TEXT,
+    media TEXT,
+    outcome TEXT,
+    reason TEXT,
+    call_type TEXT,
+    duration_secs INTEGER NOT NULL DEFAULT 0,
+    ts INTEGER NOT NULL,
+    participants TEXT,
+    UNIQUE(chat_jid, call_id, event_type, ts),
+    FOREIGN KEY (chat_jid) REFERENCES chats(jid) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_call_events_chat_ts ON call_events(chat_jid, ts);
+CREATE INDEX IF NOT EXISTS idx_call_events_ts ON call_events(ts);
+
+CREATE TABLE IF NOT EXISTS starred (
     chat_jid TEXT NOT NULL,
     msg_id TEXT NOT NULL,
     sender_jid TEXT,
@@ -98,7 +148,9 @@ CREATE TABLE starred (
     PRIMARY KEY (chat_jid, msg_id)
 );
 
-CREATE TABLE polls (
+CREATE INDEX IF NOT EXISTS idx_starred_starred_at ON starred(starred_at);
+
+CREATE TABLE IF NOT EXISTS polls (
     chat_jid TEXT NOT NULL,
     msg_id TEXT NOT NULL,
     sender_jid TEXT,
@@ -109,7 +161,9 @@ CREATE TABLE polls (
     PRIMARY KEY (chat_jid, msg_id)
 );
 
-CREATE TABLE poll_votes (
+CREATE INDEX IF NOT EXISTS idx_polls_chat_ts ON polls(chat_jid, created_ts);
+
+CREATE TABLE IF NOT EXISTS poll_votes (
     chat_jid TEXT NOT NULL,
     poll_msg_id TEXT NOT NULL,
     voter_jid TEXT NOT NULL,
@@ -119,12 +173,4 @@ CREATE TABLE poll_votes (
     PRIMARY KEY (chat_jid, poll_msg_id, voter_jid)
 );
 
-CREATE TABLE messages_fts (
-    rowid INTEGER PRIMARY KEY,
-    text TEXT,
-    media_caption TEXT,
-    filename TEXT,
-    chat_name TEXT,
-    sender_name TEXT,
-    display_text TEXT
-);
+CREATE INDEX IF NOT EXISTS idx_poll_votes_poll ON poll_votes(chat_jid, poll_msg_id);

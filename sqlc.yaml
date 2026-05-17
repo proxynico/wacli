@@ -2,7 +2,8 @@ version: "2"
 sql:
   - engine: "sqlite"
     schema:
-      - "internal/store/sqlc/schema.sql"
+      - "internal/store/schema.sql"
+      - "internal/store/sqlc/fts_stub.sql"
     queries:
       - "internal/store/sqlc/queries.sql"
     gen:
