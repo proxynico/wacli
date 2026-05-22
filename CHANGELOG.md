@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.10.1 - Unreleased
+## 0.11.0 - 2026-05-22
 
 ### Added
 
@@ -8,6 +8,7 @@
 - Messages: add explicit `messages revoke` and `messages forward` commands for stored text and media/document messages. (#259 - thanks @dovocoder)
 - Messages: persist quoted message ID and quoted sender JID metadata from WhatsApp reply context. (#260)
 - Send: add `send select` to choose stored inbound WhatsApp quick-reply buttons and list rows from scripts. (#258 - thanks @morgs)
+
 ### Security
 
 ### Fixed
