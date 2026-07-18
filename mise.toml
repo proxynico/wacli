@@ -1,0 +1,7 @@
+# Toolchain pins for this repo. Managed with mise (https://mise.jdx.dev).
+# pnpm/npm are not pinned here: pnpm self-switches from packageManager.
+# go is required by the build (see go.mod); without it `pnpm run build` fails
+# with "go: command not found".
+[tools]
+node = "24"
+go = "1.26"
